@@ -32,6 +32,11 @@ def get_stock_details(ticker_symbol: str, db: Session = Depends(get_db)):
     # Fetch real-time data
     stock_data = fetch_stock_data(ticker_symbol)
     
+    if stock_data:
+        stock.current_price = stock_data["price"]
+        db.commit()
+        db.refresh(stock)
+
     response_data = {
         "stock_id": stock.stock_id,
         "ticker_symbol": stock.ticker_symbol,

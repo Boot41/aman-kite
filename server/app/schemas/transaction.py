@@ -11,6 +11,10 @@ class TransactionBase(BaseModel):
 class TransactionCreate(TransactionBase):
     pass
 
+class TradeRequest(BaseModel):
+    stock_id: int
+    quantity: int
+
 class TransactionResponse(TransactionBase):
     transaction_id: int
     user_id: int

@@ -17,6 +17,12 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 from app.database import Base
+from app.models import fund  # Import your models to ensure they are registered
+from app.models import holding
+from app.models import stock
+from app.models import transaction
+from app.models import user
+from app.models import watchlist
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

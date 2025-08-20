@@ -8,7 +8,7 @@ from app.models.transaction import Transaction
 from app.models.stock import Stock
 from app.models.holding import Holding
 from app.models.fund import Fund
-from app.schemas.transaction import TransactionResponse, TransactionCreate
+from app.schemas.transaction import TransactionResponse, TransactionCreate, TradeRequest
 from app.utils.auth import get_current_user
 from app.models.user import User
 
@@ -62,19 +62,19 @@ def get_user_transactions(
 
 @router.post("/trade/buy", response_model=dict)
 def buy_stock(
-    transaction: TransactionCreate,
+    trade_request: TradeRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Execute a buy order"""
     # Check if stock exists
-    stock = db.query(Stock).filter(Stock.stock_id == transaction.stock_id).first()
+    stock = db.query(Stock).filter(Stock.stock_id == trade_request.stock_id).first()
     if not stock:
         raise HTTPException(status_code=404, detail="Stock not found")
     
     # Check user funds
     user_funds = db.query(Fund).filter(Fund.user_id == current_user.user_id).first()
-    total_cost = transaction.quantity * stock.current_price
+    total_cost = trade_request.quantity * stock.current_price
     
     if not user_funds or user_funds.balance < total_cost:
         raise HTTPException(status_code=400, detail="Insufficient funds")
@@ -85,9 +85,9 @@ def buy_stock(
     # Create transaction record
     db_transaction = Transaction(
         user_id=current_user.user_id,
-        stock_id=transaction.stock_id,
+        stock_id=trade_request.stock_id,
         transaction_type="BUY",
-        quantity=transaction.quantity,
+        quantity=trade_request.quantity,
         price_per_share=stock.current_price
     )
     db.add(db_transaction)
@@ -95,21 +95,21 @@ def buy_stock(
     # Update or create holding
     holding = db.query(Holding).filter(
         Holding.user_id == current_user.user_id,
-        Holding.stock_id == transaction.stock_id
+        Holding.stock_id == trade_request.stock_id
     ).first()
     
     if holding:
         # Update existing holding
-        total_quantity = holding.quantity + transaction.quantity
-        total_cost = (holding.quantity * holding.average_cost) + (transaction.quantity * stock.current_price)
+        total_quantity = holding.quantity + trade_request.quantity
+        total_cost = (holding.quantity * holding.average_cost) + (trade_request.quantity * stock.current_price)
         holding.average_cost = total_cost / total_quantity
         holding.quantity = total_quantity
     else:
         # Create new holding
         holding = Holding(
             user_id=current_user.user_id,
-            stock_id=transaction.stock_id,
-            quantity=transaction.quantity,
+            stock_id=trade_request.stock_id,
+            quantity=trade_request.quantity,
             average_cost=stock.current_price
         )
         db.add(holding)
@@ -119,28 +119,28 @@ def buy_stock(
 
 @router.post("/trade/sell", response_model=dict)
 def sell_stock(
-    transaction: TransactionCreate,
+    trade_request: TradeRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Execute a sell order"""
     # Check if stock exists
-    stock = db.query(Stock).filter(Stock.stock_id == transaction.stock_id).first()
+    stock = db.query(Stock).filter(Stock.stock_id == trade_request.stock_id).first()
     if not stock:
         raise HTTPException(status_code=404, detail="Stock not found")
     
     # Check if user has enough shares
     holding = db.query(Holding).filter(
         Holding.user_id == current_user.user_id,
-        Holding.stock_id == transaction.stock_id
+        Holding.stock_id == trade_request.stock_id
     ).first()
     
-    if not holding or holding.quantity < transaction.quantity:
+    if not holding or holding.quantity < trade_request.quantity:
         raise HTTPException(status_code=400, detail="Insufficient shares")
     
     # Update user funds
     user_funds = db.query(Fund).filter(Fund.user_id == current_user.user_id).first()
-    total_proceeds = transaction.quantity * stock.current_price
+    total_proceeds = trade_request.quantity * stock.current_price
     
     if user_funds:
         user_funds.balance += total_proceeds
@@ -151,15 +151,15 @@ def sell_stock(
     # Create transaction record
     db_transaction = Transaction(
         user_id=current_user.user_id,
-        stock_id=transaction.stock_id,
+        stock_id=trade_request.stock_id,
         transaction_type="SELL",
-        quantity=transaction.quantity,
+        quantity=trade_request.quantity,
         price_per_share=stock.current_price
     )
     db.add(db_transaction)
     
     # Update holding
-    holding.quantity -= transaction.quantity
+    holding.quantity -= trade_request.quantity
     if holding.quantity == 0:
         db.delete(holding)
     

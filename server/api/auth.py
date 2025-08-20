@@ -30,7 +30,9 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db_user = User(
         username=user.username,
         email=user.email,
-        password_hash=hashed_password
+        password_hash=hashed_password,
+        first_name=user.first_name,
+        last_name=user.last_name
     )
     
     db.add(db_user)
@@ -41,8 +43,10 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    # Find user by email
-    user = db.query(User).filter(User.email == form_data.username).first()
+    # Find user by username or email
+    user = db.query(User).filter(
+        (User.username == form_data.username) | (User.email == form_data.username)
+    ).first()
     
     if not user or not verify_password(form_data.password, user.password_hash):
         raise HTTPException(

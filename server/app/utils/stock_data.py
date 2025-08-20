@@ -5,6 +5,7 @@ from app.models.stock import Stock
 
 def fetch_stock_data(ticker_symbol: str):
     """Fetch real-time stock data from Alpha Vantage API"""
+    print(f"API Key: {settings.ALPHA_VANTAGE_API_KEY}")
     try:
         if settings.ALPHA_VANTAGE_API_KEY == "demo":
             # Mock data for demo purposes

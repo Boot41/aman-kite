@@ -10,4 +10,4 @@ class Fund(Base):
     balance = Column(Numeric(15, 2), nullable=False, default=0.00)
     
     # Relationship
-    user = relationship("User")
+    user = relationship("User", back_populates="fund")

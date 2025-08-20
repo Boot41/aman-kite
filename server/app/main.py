@@ -3,12 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 
-from app.database import SessionLocal, engine, get_db
+from app.database import SessionLocal, engine, get_db, Base
 from app import models, schemas
-from app.routes import auth, stocks, holdings, transactions, funds, watchlist
-
-# Create database tables
-models.Base.metadata.create_all(bind=engine)
+from api import auth, stocks, holdings, transactions, funds, watchlist
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -29,9 +26,9 @@ app.add_middleware(
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(stocks.router, prefix="/api/stocks", tags=["Stocks"])
-app.include_router(holdings.router, prefix="/api/holdings", tags=["Holdings"])
-app.include_router(transactions.router, prefix="/api/transactions", tags=["Transactions"])
-app.include_router(funds.router, prefix="/api/funds", tags=["Funds"])
+app.include_router(holdings.router, prefix="/api/portfolio/holdings", tags=["Holdings"])
+app.include_router(transactions.router, prefix="/api", tags=["Transactions"])
+app.include_router(funds.router, prefix="/api/portfolio/funds", tags=["Funds"])
 app.include_router(watchlist.router, prefix="/api/watchlist", tags=["Watchlist"])
 
 @app.get("/")

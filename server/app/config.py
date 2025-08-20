@@ -6,8 +6,8 @@ load_dotenv()
 
 class Settings:
     # Database
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/stockdb")
-    
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://aman:yourpassword@localhost/stockapp")
+
     # JWT
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-here-change-in-production")
     ALGORITHM: str = os.getenv("ALGORITHM", "HS256")

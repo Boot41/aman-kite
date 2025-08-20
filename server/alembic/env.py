@@ -1,6 +1,8 @@
 from logging.config import fileConfig
+
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
+
 from alembic import context
 
 # this is the Alembic Config object, which provides
@@ -15,13 +17,6 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 from app.database import Base
-from app.models.user import User
-from app.models.stock import Stock
-from app.models.holding import Holding
-from app.models.watchlist import Watchlist
-from app.models.transaction import Transaction
-from app.models.fund import Fund
-
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

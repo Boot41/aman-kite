@@ -15,5 +15,5 @@ class Transaction(Base):
     transaction_date = Column(DateTime(timezone=True), server_default=func.now())
     
     # Relationships
-    user = relationship("User")
+    user = relationship("User", back_populates="transactions")
     stock = relationship("Stock")

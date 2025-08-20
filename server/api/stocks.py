@@ -16,9 +16,9 @@ def get_all_stocks(db: Session = Depends(get_db)):
     return db.query(Stock).all()
 
 @router.get("/search", response_model=List[StockSearchResponse])
-def search_stocks_route(query: str, db: Session = Depends(get_db)):
+def search_stocks_route(q: str, db: Session = Depends(get_db)):
     """Search stocks by ticker symbol or company name"""
-    stocks = search_stocks(db, query)
+    stocks = search_stocks(db, q)
     return stocks
 
 @router.get("/{ticker_symbol}", response_model=StockDetailResponse)

@@ -13,5 +13,5 @@ class Watchlist(Base):
     __table_args__ = (UniqueConstraint('user_id', 'stock_id', name='_user_stock_uc'),)
     
     # Relationships
-    user = relationship("User")
+    user = relationship("User", back_populates="watchlist")
     stock = relationship("Stock")

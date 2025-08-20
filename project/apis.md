@@ -63,6 +63,22 @@ This document provides detailed documentation for the RESTful APIs used in the s
 }
 ```
 
+### 1.4. Get Current User Information
+
+*   **Method:** `GET`
+*   **Endpoint:** `/api/auth/me`
+*   **Request Body:** None
+*   **Sample Response:**
+
+```json
+{
+  "user_id": 1,
+  "username": "testuser",
+  "email": "test@example.com",
+  "created_at": "2023-10-27T10:00:00Z"
+}
+```
+
 ---
 
 ## 2. Stock Operations APIs
@@ -139,6 +155,25 @@ This document provides detailed documentation for the RESTful APIs used in the s
 }
 ```
 
+### 2.5. Get All Stocks
+
+*   **Method:** `GET`
+*   **Endpoint:** `/api/stocks/`
+*   **Request Body:** None
+*   **Sample Response:**
+
+```json
+[
+  {
+    "stock_id": 1,
+    "ticker_symbol": "GOOGL",
+    "company_name": "Alphabet Inc.",
+    "current_price": 2800.00,
+    "last_updated": "2023-10-27T10:00:00Z"
+  }
+]
+```
+
 ---
 
 ## 3. Holdings APIs
@@ -163,7 +198,25 @@ This document provides detailed documentation for the RESTful APIs used in the s
 ]
 ```
 
-### 3.2. Buy Stock
+### 3.2. Get Holding by Stock ID
+
+*   **Method:** `GET`
+*   **Endpoint:** `/api/portfolio/holdings/{stock_id}`
+*   **Request Body:** None
+*   **Sample Response:**
+
+```json
+{
+  "stock_id": 1,
+  "ticker_symbol": "GOOGL",
+  "quantity": 10,
+  "average_cost": 2500.00,
+  "current_price": 2800.00,
+  "total_value": 28000.00
+}
+```
+
+### 3.3. Buy Stock
 
 *   **Method:** `POST`
 *   **Endpoint:** `/api/trade/buy`
@@ -184,7 +237,7 @@ This document provides detailed documentation for the RESTful APIs used in the s
 }
 ```
 
-### 3.3. Sell Stock
+### 3.4. Sell Stock
 
 *   **Method:** `POST`
 *   **Endpoint:** `/api/trade/sell`

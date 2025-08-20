@@ -12,5 +12,5 @@ class Holding(Base):
     average_cost = Column(Numeric(10, 2), nullable=False)
     
     # Relationships
-    user = relationship("User")
+    user = relationship("User", back_populates="holdings")
     stock = relationship("Stock")

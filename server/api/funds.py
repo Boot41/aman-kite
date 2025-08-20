@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from decimal import Decimal
 
 from app.database import get_db
 from app.models.fund import Fund
@@ -8,6 +9,7 @@ from app.utils.auth import get_current_user
 from app.models.user import User
 
 router = APIRouter()
+
 
 @router.get("/", response_model=FundResponse)
 def get_user_funds(
@@ -42,9 +44,9 @@ def add_funds(
     funds = db.query(Fund).filter(Fund.user_id == current_user.user_id).first()
     
     if funds:
-        funds.balance += fund_update.amount
+        funds.balance += Decimal(fund_update.amount)
     else:
-        funds = Fund(user_id=current_user.user_id, balance=fund_update.amount)
+        funds = Fund(user_id=current_user.user_id, balance=Decimal(fund_update.amount))
         db.add(funds)
     
     db.commit()
@@ -62,10 +64,10 @@ def withdraw_funds(
     
     funds = db.query(Fund).filter(Fund.user_id == current_user.user_id).first()
     
-    if not funds or funds.balance < fund_update.amount:
+    if not funds or funds.balance < Decimal(fund_update.amount):
         raise HTTPException(status_code=400, detail="Insufficient funds")
     
-    funds.balance -= fund_update.amount
+    funds.balance -= Decimal(fund_update.amount)
     db.commit()
     
     return {"message": "Withdrawal successful"}

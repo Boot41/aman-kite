@@ -14,7 +14,7 @@ from app.models.user import User
 
 router = APIRouter()
 
-@router.get("/", response_model=List[TransactionResponse])
+@router.get("/portfolio/transactions", response_model=List[TransactionResponse])
 def get_user_transactions(
     days: int = 30,  # Default to last 30 days
     db: Session = Depends(get_db),
@@ -60,7 +60,7 @@ def get_user_transactions(
     
     return response
 
-@router.post("/buy", response_model=dict)
+@router.post("/trade/buy", response_model=dict)
 def buy_stock(
     transaction: TransactionCreate,
     db: Session = Depends(get_db),
@@ -117,7 +117,7 @@ def buy_stock(
     db.commit()
     return {"message": "Buy order executed successfully"}
 
-@router.post("/sell", response_model=dict)
+@router.post("/trade/sell", response_model=dict)
 def sell_stock(
     transaction: TransactionCreate,
     db: Session = Depends(get_db),

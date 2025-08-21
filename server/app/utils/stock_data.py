@@ -4,9 +4,9 @@ from app.config import settings
 from app.models.stock import Stock
 
 def fetch_stock_data(ticker_symbol: str):
-    """Fetch real-time stock data from Alpha Vantage API"""
+    """Fetch real-time stock data from Finnhub API"""
     try:
-        if settings.ALPHA_VANTAGE_API_KEY == "demo":
+        if settings.FINNHUB_API_KEY == "demo":
             # Mock data for demo purposes
             return {
                 "price": 150.25,
@@ -14,24 +14,27 @@ def fetch_stock_data(ticker_symbol: str):
                 "change_percent": 1.69
             }
         
-        url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={ticker_symbol}&apikey={settings.ALPHA_VANTAGE_API_KEY}"
+        url = f"https://finnhub.io/api/v1/quote?symbol={ticker_symbol}&token={settings.FINNHUB_API_KEY}"
         response = requests.get(url, timeout=10)
         data = response.json()
         
-        # Handle API limit or error messages gracefully
-        if isinstance(data, dict) and ("Note" in data or "Information" in data or "Error Message" in data):
-            return None
-        
-        if "Global Quote" in data:
-            quote = data["Global Quote"]
+        # Check if we got valid data
+        if isinstance(data, dict) and 'c' in data and data['c'] is not None:
+            current_price = float(data['c'])  # Current price
+            daily_change = float(data['d'])   # Daily change
+            daily_change_percent = float(data['dp'])  # Daily change percent
+            
             return {
-                "price": float(quote.get("05. price", 0)),
-                "change": float(quote.get("09. change", 0)),
-                "change_percent": float(quote.get("10. change percent", "0%").replace("%", ""))
+                "price": current_price,
+                "change": daily_change,
+                "change_percent": daily_change_percent
             }
-        return None
+        else:
+            print(f"Invalid data received for {ticker_symbol}: {data}")
+            return None
+            
     except Exception as e:
-        print(f"Error fetching stock data: {e}")
+        print(f"Error fetching stock data for {ticker_symbol}: {e}")
         return None
 
 def update_stock_prices(db: Session):

@@ -33,8 +33,18 @@ def get_portfolio_current_value(
             if not stock:
                 continue
                 
-            # Use current price from database
-            current_price = float(stock.current_price)
+            # Get real-time stock data
+            stock_data = fetch_stock_data(stock.ticker_symbol)
+            if stock_data:
+                current_price = stock_data["price"]
+                daily_change = stock_data["change"]
+                daily_change_percent = stock_data["change_percent"]
+                # Update database with latest price
+                stock.current_price = current_price
+            else:
+                current_price = float(stock.current_price)
+                daily_change = 0.0
+                daily_change_percent = 0.0
             
             # Calculate values
             invested_value = float(holding.quantity) * float(holding.average_cost)
@@ -53,8 +63,8 @@ def get_portfolio_current_value(
                 "current_value": current_value,
                 "pnl": pnl,
                 "pnl_percent": pnl_percent,
-                "change": 0.0,
-                "change_percent": 0.0
+                "change": daily_change,
+                "change_percent": daily_change_percent
             }
             
             portfolio_data["holdings"].append(holding_data)
@@ -66,6 +76,9 @@ def get_portfolio_current_value(
             (portfolio_data["profit_loss"] / portfolio_data["invested_value"] * 100) 
             if portfolio_data["invested_value"] > 0 else 0.0
         )
+        
+        # Commit database updates
+        db.commit()
         
         return portfolio_data
     except Exception as e:

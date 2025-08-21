@@ -13,29 +13,33 @@ import {
   Sparkles
 } from 'lucide-react';
 import { portfolioAPI, stockAPI } from '../services/api';
-import type { Holding, Fund, Transaction, Stock } from '../types';
+import type { Holding, Fund, Transaction } from '../types';
 
 const Dashboard: React.FC = () => {
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [funds, setFunds] = useState<Fund | null>(null);
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
-  const [topStocks, setTopStocks] = useState<Stock[]>([]);
+  const [topStocks, setTopStocks] = useState<any[]>([]);
+  const [portfolioData, setPortfolioData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [holdingsData, fundsData, transactionsData, stocksData] = await Promise.all([
+        const [holdingsData, fundsData, transactionsData, marketData, portfolioValueData] = await Promise.all([
           portfolioAPI.getHoldings(),
           portfolioAPI.getFunds(),
           portfolioAPI.getTransactions(7), // Last 7 days
-          stockAPI.getAllStocks()
+          stockAPI.getMarketOverview(),
+          portfolioAPI.getCurrentValue()
         ]);
 
         setHoldings(holdingsData);
         setFunds(fundsData);
         setRecentTransactions(transactionsData.slice(0, 5)); // Show only 5 recent
-        setTopStocks(stocksData.slice(0, 6)); // Show top 6 stocks
+        setTopStocks(marketData); // Use market overview data
+        setPortfolioData(portfolioValueData);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -46,9 +50,31 @@ const Dashboard: React.FC = () => {
     fetchDashboardData();
   }, []);
 
-  const totalPortfolioValue = holdings.reduce((sum, holding) => sum + holding.total_value, 0);
-  const totalProfitLoss = holdings.reduce((sum, holding) => sum + holding.profit_loss, 0);
-  const profitLossPercentage = totalPortfolioValue > 0 ? (totalProfitLoss / (totalPortfolioValue - totalProfitLoss)) * 100 : 0;
+  // Use real-time portfolio data if available, fallback to calculated values
+  const totalInvestedValue = portfolioData?.invested_value || holdings.reduce((sum, holding) => sum + (holding.quantity * holding.average_cost), 0);
+  const totalCurrentValue = portfolioData?.current_value || holdings.reduce((sum, holding) => sum + holding.total_value, 0);
+  const totalProfitLoss = portfolioData?.profit_loss || holdings.reduce((sum, holding) => sum + holding.profit_loss, 0);
+  const profitLossPercentage = portfolioData?.profit_loss_percentage || (totalCurrentValue > 0 ? (totalProfitLoss / totalInvestedValue) * 100 : 0);
+
+  const handleRefreshPrices = async () => {
+    setIsRefreshing(true);
+    try {
+      const result = await portfolioAPI.refreshPrices();
+      console.log('Refresh result:', result);
+      
+      // Fetch updated portfolio data
+      const updatedPortfolioData = await portfolioAPI.getCurrentValue();
+      setPortfolioData(updatedPortfolioData);
+      
+      // Show success message
+      alert(`Updated ${result.updated_count} stock prices`);
+    } catch (error) {
+      console.error('Error refreshing prices:', error);
+      alert('Failed to refresh prices. Please try again.');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -63,13 +89,23 @@ const Dashboard: React.FC = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <Link
-          to="/funds"
-          className="btn btn-primary flex items-center space-x-2"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add Funds</span>
-        </Link>
+        <div className="flex space-x-3">
+          <button
+            onClick={handleRefreshPrices}
+            disabled={isRefreshing}
+            className="btn btn-secondary flex items-center space-x-2"
+          >
+            <Activity className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? 'Refreshing...' : 'Refresh Prices'}</span>
+          </button>
+          <Link
+            to="/funds"
+            className="btn btn-primary flex items-center space-x-2"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Add Funds</span>
+          </Link>
+        </div>
       </div>
 
       {/* Portfolio Overview Cards */}
@@ -79,7 +115,7 @@ const Dashboard: React.FC = () => {
             <div>
               <p className="text-sm font-medium text-gray-600">Total Portfolio</p>
               <p className="text-2xl font-bold text-gray-900">
-                ${(totalPortfolioValue + (funds?.balance || 0)).toFixed(2)}
+                ${(totalCurrentValue + (funds?.balance || 0)).toFixed(2)}
               </p>
             </div>
             <div className="bg-primary-100 p-3 rounded-full">
@@ -93,7 +129,7 @@ const Dashboard: React.FC = () => {
             <div>
               <p className="text-sm font-medium text-gray-600">Invested Value</p>
               <p className="text-2xl font-bold text-gray-900">
-                ${totalPortfolioValue.toFixed(2)}
+                ${totalInvestedValue.toFixed(2)}
               </p>
             </div>
             <div className="bg-success-100 p-3 rounded-full">
@@ -291,14 +327,12 @@ const Dashboard: React.FC = () => {
                   </div>
                   <div className="text-right">
                     <p className="font-medium text-gray-900">${stock.current_price}</p>
-                    {stock.historical_data && (
-                      <p className={`text-sm ${
-                        stock.historical_data.change >= 0 ? 'text-success-600' : 'text-danger-600'
-                      }`}>
-                        {stock.historical_data.change >= 0 ? '+' : ''}
-                        {stock.historical_data.change_percent.toFixed(2)}%
-                      </p>
-                    )}
+                    <p className={`text-sm ${
+                      stock.change >= 0 ? 'text-success-600' : 'text-danger-600'
+                    }`}>
+                      {stock.change >= 0 ? '+' : ''}
+                      {stock.change_percent.toFixed(2)}%
+                    </p>
                   </div>
                 </div>
               </Link>

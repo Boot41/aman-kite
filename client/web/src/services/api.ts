@@ -81,6 +81,11 @@ export const stockAPI = {
     return response.data;
   },
 
+  getMarketOverview: async () => {
+    const response = await api.get('/api/stocks/market-overview');
+    return response.data;
+  },
+
   searchStocks: async (query: string): Promise<Stock[]> => {
     const response = await api.get<Stock[]>(`/api/stocks/search?q=${query}`);
     return response.data;
@@ -116,6 +121,16 @@ export const portfolioAPI = {
 
   withdrawFunds: async (amount: number) => {
     const response = await api.post('/api/portfolio/funds/withdraw', { amount });
+    return response.data;
+  },
+
+  getCurrentValue: async () => {
+    const response = await api.get('/api/portfolio/current-value');
+    return response.data;
+  },
+
+  refreshPrices: async () => {
+    const response = await api.post('/api/portfolio/refresh-prices');
     return response.data;
   }
 };

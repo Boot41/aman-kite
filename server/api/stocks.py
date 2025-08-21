@@ -15,6 +15,40 @@ def get_all_stocks(db: Session = Depends(get_db)):
     """Get all available stocks"""
     return db.query(Stock).all()
 
+@router.get("/market-overview")
+def get_market_overview(db: Session = Depends(get_db)):
+    """Get stocks with real-time data for market overview"""
+    # Get popular stocks that are more likely to have real-time data
+    popular_tickers = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'NVDA']
+    market_data = []
+    
+    for ticker in popular_tickers:
+        stock = db.query(Stock).filter(Stock.ticker_symbol == ticker).first()
+        if not stock:
+            continue
+            
+        stock_data = fetch_stock_data(stock.ticker_symbol)
+        if stock_data:
+            stock.current_price = stock_data["price"]
+            change = stock_data["change"]
+            change_percent = stock_data["change_percent"]
+        else:
+            change = 0.0
+            change_percent = 0.0
+            
+        market_data.append({
+            "stock_id": stock.stock_id,
+            "ticker_symbol": stock.ticker_symbol,
+            "company_name": stock.company_name,
+            "current_price": float(stock.current_price),
+            "change": change,
+            "change_percent": change_percent,
+            "last_updated": stock.last_updated
+        })
+    
+    db.commit()
+    return market_data
+
 @router.get("/search", response_model=List[StockSearchResponse])
 def search_stocks_route(q: str, db: Session = Depends(get_db)):
     """Search stocks by ticker symbol or company name"""

@@ -154,15 +154,15 @@ class AIService:
             for holding in holdings:
                 stock = db.query(Stock).filter(Stock.stock_id == holding.stock_id).first()
                 if stock:
-                    current_value = holding.quantity * stock.current_price
-                    invested_value = holding.quantity * holding.average_cost
+                    current_value = float(holding.quantity * stock.current_price)
+                    invested_value = float(holding.quantity * holding.average_cost)
                     pnl = current_value - invested_value
                     pnl_percent = (pnl / invested_value * 100) if invested_value > 0 else 0
                     
                     portfolio_data.append({
                         "symbol": stock.ticker_symbol,
                         "company": stock.company_name,
-                        "quantity": holding.quantity,
+                        "quantity": int(holding.quantity),
                         "current_value": current_value,
                         "invested_value": invested_value,
                         "pnl": pnl,

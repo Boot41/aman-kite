@@ -193,7 +193,7 @@ const AIInsightsPage: React.FC = () => {
 
             {portfolioOverview ? (
               <div className="space-y-4">
-                <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 border border-purple-100">
+                <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 border border-purple-100 h-48 overflow-y-auto">
                   <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                     {portfolioOverview.overview}
                   </p>

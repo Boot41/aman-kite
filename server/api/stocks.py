@@ -5,7 +5,7 @@ from typing import List
 from app.database import get_db
 from app.models.stock import Stock
 from app.schemas.stock import StockResponse, StockSearchResponse, StockDetailResponse
-from app.utils.stock_data import fetch_stock_data, search_stocks
+from app.utils.stock_data import fetch_stock_data, search_stocks, update_stock_prices
 from app.utils.auth import get_current_user
 
 router = APIRouter()
@@ -49,3 +49,15 @@ def get_stock_details(ticker_symbol: str, db: Session = Depends(get_db)):
         response_data["historical_data"] = stock_data
     
     return response_data
+
+@router.post("/refresh")
+def refresh_all_stocks(
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Refresh current_price for all stocks in the database."""
+    try:
+        update_stock_prices(db)
+        return {"message": "Stock prices refreshed"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to refresh stock prices: {str(e)}")

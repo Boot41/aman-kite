@@ -5,7 +5,6 @@ from app.models.stock import Stock
 
 def fetch_stock_data(ticker_symbol: str):
     """Fetch real-time stock data from Alpha Vantage API"""
-    print(f"API Key: {settings.ALPHA_VANTAGE_API_KEY}")
     try:
         if settings.ALPHA_VANTAGE_API_KEY == "demo":
             # Mock data for demo purposes
@@ -16,8 +15,12 @@ def fetch_stock_data(ticker_symbol: str):
             }
         
         url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={ticker_symbol}&apikey={settings.ALPHA_VANTAGE_API_KEY}"
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         data = response.json()
+        
+        # Handle API limit or error messages gracefully
+        if isinstance(data, dict) and ("Note" in data or "Information" in data or "Error Message" in data):
+            return None
         
         if "Global Quote" in data:
             quote = data["Global Quote"]

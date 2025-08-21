@@ -2,6 +2,12 @@
 
 A comprehensive stock trading web application similar to Zerodha, built with modern technologies and enhanced with AI-powered insights.
 
+## 🎬 Demo Video
+
+[![Kite Trading Platform Demo](https://img.shields.io/badge/Watch%20Demo-Loom-FF5722?style=for-the-badge&logo=loom)](https://www.loom.com/share/your-demo-video-id)
+
+*Click above to watch a comprehensive demo of all features including AI insights, trading functionality, and portfolio management.*
+
 ![React](https://img.shields.io/badge/React-19.1.1-61DAFB?style=flat&logo=react)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Latest-009688?style=flat&logo=fastapi)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Latest-336791?style=flat&logo=postgresql)
@@ -25,10 +31,12 @@ A comprehensive stock trading web application similar to Zerodha, built with mod
 - **Risk Assessment** - AI-powered risk evaluation for individual stocks and portfolio
 
 ### 📊 Advanced Features
-- **Real-time Price Updates** - Integration with Alpha Vantage API
+- **Real-time Price Updates** - Integration with Finnhub API for live market data
 - **Responsive Design** - Beautiful UI that works on all devices
 - **Comprehensive Dashboard** - Overview of portfolio, P&L, and market data
-- **Search & Discovery** - Find and analyze stocks easily
+- **Search & Discovery** - Find and analyze stocks with real-time quotes
+- **Market News Integration** - Latest financial news and market updates
+- **Technical Indicators** - Real-time technical analysis data
 
 ## 🏗️ Architecture
 
@@ -46,7 +54,7 @@ A comprehensive stock trading web application similar to Zerodha, built with mod
 - **Alembic** for database migrations
 - **JWT Authentication** with secure token handling
 - **Groq AI Integration** for intelligent insights
-- **Alpha Vantage API** for real-time stock data
+- **Finnhub API** for real-time stock data and market information
 
 ### Database Schema
 ```sql
@@ -58,11 +66,11 @@ Funds  Transactions Watchlist
 ## 🚀 Quick Start
 
 ### Prerequisites
-- **Node.js** 18+ and **pnpm**
+- **Node.js** 18+ and **npm**
 - **Python** 3.10+
 - **PostgreSQL** 12+
 - **Groq API Key** (for AI features)
-- **Alpha Vantage API Key** (for stock data)
+- **Finnhub API Key** (for real-time stock data)
 
 ### 1. Clone Repository
 ```bash
@@ -87,7 +95,7 @@ cp .env.example .env
 # DATABASE_URL=postgresql://username:password@localhost/stockapp
 # SECRET_KEY=your-super-secret-jwt-key
 # GROQ_API_KEY=your-groq-api-key
-# ALPHA_VANTAGE_API_KEY=your-alpha-vantage-key
+# FINNHUB_API_KEY=your-finnhub-api-key
 
 # Run database migrations
 alembic upgrade head
@@ -128,7 +136,7 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 # API Keys
-ALPHA_VANTAGE_API_KEY=your-alpha-vantage-api-key
+FINNHUB_API_KEY=your-finnhub-api-key
 GROQ_API_KEY=your-groq-api-key
 
 # Settings
@@ -273,7 +281,7 @@ Powered by **Groq's LLaMA 3 8B model** (llama3-8b-8192) for:
   - AMZN (Amazon.com Inc.), TSLA (Tesla Inc.), NVDA (NVIDIA Corporation)
   - JPM (JPMorgan Chase & Co.), V (Visa Inc.), WMT (Walmart Inc.)
   - DIS (The Walt Disney Company), NFLX (Netflix Inc.), and more
-- **Real-time Prices** - Alpha Vantage API integration for live market data
+- **Real-time Prices** - Finnhub API integration for live market data and quotes
 - **Historical Data** - Price history and trends analysis
 - **Market Data** - Volume, market cap, and key financial metrics
 
@@ -297,7 +305,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- **Alpha Vantage** for stock market data
+- **Finnhub** for comprehensive stock market data and real-time quotes
 - **Groq** for AI-powered insights
 - **React Team** for the amazing frontend framework
 - **FastAPI** for the high-performance backend framework

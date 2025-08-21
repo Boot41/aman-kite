@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Eye, EyeOff, TrendingUp } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -23,8 +23,9 @@ const Login: React.FC = () => {
     try {
       await login(formData.email, formData.password);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Login failed. Please try again.');
+    } catch (err: unknown) {
+      const error = err as any;
+      setError(error.response?.data?.detail || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -42,9 +43,11 @@ const Login: React.FC = () => {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex justify-center">
-            <div className="bg-primary-600 p-3 rounded-full">
-              <TrendingUp className="h-8 w-8 text-white" />
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="Kite App Logo" 
+              className="h-16 w-16 rounded-lg"
+            />
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
             Welcome back

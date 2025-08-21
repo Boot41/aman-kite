@@ -19,7 +19,7 @@ const Funds: React.FC = () => {
     try {
       const data = await portfolioAPI.getFunds();
       setFunds(data);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching funds:', error);
     } finally {
       setIsLoading(false);
@@ -46,17 +46,18 @@ const Funds: React.FC = () => {
     try {
       if (operation === 'add') {
         await portfolioAPI.addFunds(transactionAmount);
-        setMessage(`Successfully added $${transactionAmount.toFixed(2)} to your account`);
+        setMessage(`Successfully added ${transactionAmount.toFixed(2)} to your account`);
       } else {
         await portfolioAPI.withdrawFunds(transactionAmount);
-        setMessage(`Successfully withdrew $${transactionAmount.toFixed(2)} from your account`);
+        setMessage(`Successfully withdrew ${transactionAmount.toFixed(2)} from your account`);
       }
       
       setAmount('');
       await fetchFunds(); // Refresh funds data
       setTimeout(() => setMessage(''), 5000);
-    } catch (error: any) {
-      setMessage(error.response?.data?.detail || 'Transaction failed');
+    } catch (error: unknown) {
+      const err = error as any;
+      setMessage(err.response?.data?.detail || 'Transaction failed');
       setTimeout(() => setMessage(''), 5000);
     } finally {
       setIsProcessing(false);
@@ -222,7 +223,7 @@ const Funds: React.FC = () => {
                 <span>
                   {isProcessing 
                     ? 'Processing...' 
-                    : `${operation === 'add' ? 'Add' : 'Withdraw'} $${amount || '0.00'}`
+                    : `${operation === 'add' ? 'Add' : 'Withdraw'} ${amount || '0.00'}`
                   }
                 </span>
               </button>

@@ -6,8 +6,8 @@ import {
   TrendingDown, 
   Star, 
   StarOff,
-  ShoppingCart,
-  DollarSign
+  DollarSign,
+  ShoppingCart
 } from 'lucide-react';
 import { stockAPI, tradingAPI, watchlistAPI, portfolioAPI } from '../services/api';
 import type { Stock, Fund } from '../types';
@@ -37,7 +37,7 @@ const StockDetails: React.FC = () => {
         setStock(stockData);
         setFunds(fundsData);
         setIsInWatchlist(watchlistData.some(item => item.ticker_symbol === ticker));
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error fetching stock data:', error);
       } finally {
         setIsLoading(false);
@@ -61,8 +61,9 @@ const StockDetails: React.FC = () => {
         setMessage('Added to watchlist');
       }
       setTimeout(() => setMessage(''), 3000);
-    } catch (error: any) {
-      setMessage(error.response?.data?.detail || 'Error updating watchlist');
+    } catch (error: unknown) {
+      const err = error as any;
+      setMessage(err.response?.data?.detail || 'Error updating watchlist');
       setTimeout(() => setMessage(''), 3000);
     }
   };
@@ -85,8 +86,9 @@ const StockDetails: React.FC = () => {
       setFunds(updatedFunds);
       
       setTimeout(() => setMessage(''), 5000);
-    } catch (error: any) {
-      setMessage(error.response?.data?.detail || 'Trade failed');
+    } catch (error: unknown) {
+      const err = error as any;
+      setMessage(err.response?.data?.detail || 'Trade failed');
       setTimeout(() => setMessage(''), 5000);
     } finally {
       setIsTrading(false);

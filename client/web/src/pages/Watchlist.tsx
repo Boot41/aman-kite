@@ -38,7 +38,7 @@ const Watchlist: React.FC = () => {
       ]);
       setWatchlist(watchlistData);
       setAllStocks(stocksData);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching data:', error);
     } finally {
       setIsLoading(false);
@@ -53,8 +53,9 @@ const Watchlist: React.FC = () => {
       setMessage('Stock added to watchlist');
       setSearchQuery(''); // Clear search
       setTimeout(() => setMessage(''), 3000);
-    } catch (error: any) {
-      setMessage(error.response?.data?.detail || 'Error adding to watchlist');
+    } catch (error: unknown) {
+      const err = error as any;
+      setMessage(err.response?.data?.detail || 'Error adding to watchlist');
       setTimeout(() => setMessage(''), 3000);
     } finally {
       setIsAdding(false);
@@ -67,8 +68,9 @@ const Watchlist: React.FC = () => {
       await fetchData(); // Refresh data
       setMessage('Stock removed from watchlist');
       setTimeout(() => setMessage(''), 3000);
-    } catch (error: any) {
-      setMessage(error.response?.data?.detail || 'Error removing from watchlist');
+    } catch (error: unknown) {
+      const err = error as any;
+      setMessage(err.response?.data?.detail || 'Error removing from watchlist');
       setTimeout(() => setMessage(''), 3000);
     }
   };

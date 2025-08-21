@@ -1,26 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type { User } from '../types';
 import { authAPI } from '../services/api';
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (username: string, password: string) => Promise<void>;
-  register: (username: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+import { AuthContext } from './AuthContext.hooks';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -37,7 +19,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
           const userData = await authAPI.getCurrentUser();
           setUser(userData);
-        } catch (error) {
+        } catch (error: unknown) {
           localStorage.removeItem('token');
         }
       }
@@ -56,7 +38,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const userData = await authAPI.getCurrentUser();
       console.log('AuthContext: User data:', userData);
       setUser(userData);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('AuthContext: Login error:', error);
       throw error;
     }
@@ -72,7 +54,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('AuthContext: Starting auto-login with username:', username);
       await login(username, password);
       console.log('AuthContext: Auto-login successful');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('AuthContext: Registration error:', error);
       throw error;
     }
@@ -94,3 +76,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+// Re-export useAuth hook
+export { useAuth } from './AuthContext.hooks';

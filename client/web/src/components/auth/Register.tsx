@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Eye, EyeOff, TrendingUp } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -40,17 +40,18 @@ const Register: React.FC = () => {
       await register(formData.username, formData.email, formData.password);
       console.log('Register: Registration successful, navigating to dashboard');
       navigate('/dashboard');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Register: Registration failed:', err);
-      console.error('Register: Error response:', err.response);
+      console.error('Register: Error response:', (err as any).response);
       let errorMessage = 'Registration failed. Please try again.';
       
-      if (err.response?.data?.detail) {
-        errorMessage = err.response.data.detail;
-      } else if (err.message && err.message.includes('already registered')) {
+      const error = err as any;
+      if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.message && error.message.includes('already registered')) {
         errorMessage = 'This username or email is already registered. Please use different credentials.';
-      } else if (err.message) {
-        errorMessage = err.message;
+      } else if (error.message) {
+        errorMessage = error.message;
       }
       
       console.error('Register: Final error message:', errorMessage);
@@ -72,9 +73,11 @@ const Register: React.FC = () => {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex justify-center">
-            <div className="bg-primary-600 p-3 rounded-full">
-              <TrendingUp className="h-8 w-8 text-white" />
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="Kite App Logo" 
+              className="h-16 w-16 rounded-lg"
+            />
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
             Create your account

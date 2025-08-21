@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { 
-  TrendingUp, 
+import {  
   Home, 
   Briefcase, 
   History, 
@@ -36,10 +35,12 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/dashboard" className="flex items-center space-x-2">
-              <div className="bg-primary-600 p-2 rounded-lg">
-                <TrendingUp className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">StockTrader</span>
+            <img 
+              src="/logo.png" 
+              alt="Kite App Logo" 
+              className="h-8 w-8 rounded-lg"
+            />
+              <span className="text-xl font-bold text-gray-900">Kite Clone</span>
             </Link>
           </div>
 

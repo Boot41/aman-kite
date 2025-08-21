@@ -7,6 +7,11 @@ Tests all endpoints to ensure they're working properly
 import requests
 import json
 import sys
+import pytest
+
+# This file is a manual integration script that expects a running server.
+# Skip it during automated pytest runs to avoid fixture errors and external calls.
+pytestmark = pytest.mark.skip(reason="Integration script; requires running server on localhost:8000")
 
 BASE_URL = "http://localhost:8000"
 

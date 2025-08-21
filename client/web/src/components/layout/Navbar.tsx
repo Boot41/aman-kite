@@ -6,9 +6,10 @@ import {
   Briefcase, 
   History, 
   DollarSign, 
-  Star, 
+  Heart, 
   LogOut,
-  User
+  User,
+  Brain
 } from 'lucide-react';
 
 const Navbar: React.FC = () => {
@@ -26,7 +27,8 @@ const Navbar: React.FC = () => {
     { path: '/holdings', label: 'Holdings', icon: Briefcase },
     { path: '/transactions', label: 'Transactions', icon: History },
     { path: '/funds', label: 'Funds', icon: DollarSign },
-    { path: '/watchlist', label: 'Watchlist', icon: Star },
+    { path: '/watchlist', label: 'Watchlist', icon: Heart },
+    { path: '/ai-insights', label: 'AI Insights', icon: Brain },
   ];
 
   return (

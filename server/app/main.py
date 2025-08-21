@@ -5,7 +5,7 @@ from typing import List
 
 from app.database import SessionLocal, engine, get_db, Base
 from app import models, schemas
-from api import auth, stocks, holdings, transactions, funds, watchlist
+from api import auth, stocks, holdings, transactions, funds, watchlist, ai, portfolio
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -30,6 +30,8 @@ app.include_router(holdings.router, prefix="/api/portfolio/holdings", tags=["Hol
 app.include_router(transactions.router, prefix="/api", tags=["Transactions"])
 app.include_router(funds.router, prefix="/api/portfolio/funds", tags=["Funds"])
 app.include_router(watchlist.router, prefix="/api/watchlist", tags=["Watchlist"])
+app.include_router(ai.router, prefix="/api/ai", tags=["AI Insights"])
+app.include_router(portfolio.router, prefix="/api/portfolio", tags=["Portfolio"])
 
 @app.get("/")
 async def root():

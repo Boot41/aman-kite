@@ -14,6 +14,7 @@ import StockDetails from './pages/StockDetails';
 import Transactions from './pages/Transactions';
 import Funds from './pages/Funds';
 import Watchlist from './pages/Watchlist';
+import AIInsights from './pages/AIInsights';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             <Route path="transactions" element={<Transactions />} />
             <Route path="funds" element={<Funds />} />
             <Route path="watchlist" element={<Watchlist />} />
+            <Route path="ai-insights" element={<AIInsights />} />
           </Route>
           
           {/* Catch all route */}

@@ -151,4 +151,22 @@ export const watchlistAPI = {
   }
 };
 
+// AI API
+export const aiAPI = {
+  getStockInsights: async (ticker: string) => {
+    const response = await api.get(`/api/ai/stock-insights/${ticker}`);
+    return response.data;
+  },
+
+  getMarketSentiment: async () => {
+    const response = await api.get('/api/ai/market-sentiment');
+    return response.data;
+  },
+
+  getPortfolioOverview: async () => {
+    const response = await api.get('/api/ai/portfolio-overview');
+    return response.data;
+  }
+};
+
 export default api;

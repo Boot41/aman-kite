@@ -8,7 +8,9 @@ import {
   Activity,
   ArrowUpRight,
   ArrowDownRight,
-  Plus
+  Plus,
+  Brain,
+  Sparkles
 } from 'lucide-react';
 import { portfolioAPI, stockAPI } from '../services/api';
 import type { Holding, Fund, Transaction, Stock } from '../types';
@@ -227,6 +229,44 @@ const Dashboard: React.FC = () => {
                 <p className="text-sm text-gray-400">Your transactions will appear here</p>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* AI Insights Preview */}
+      <div className="card bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-100">
+        <div className="p-6 border-b border-purple-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Brain className="h-6 w-6 text-purple-600" />
+              <h2 className="text-lg font-semibold text-gray-900">AI Insights</h2>
+              <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full flex items-center space-x-1">
+                <Sparkles className="h-3 w-3" />
+                <span>New</span>
+              </span>
+            </div>
+            <Link to="/ai-insights" className="text-purple-600 hover:text-purple-700 text-sm font-medium">
+              View all insights →
+            </Link>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="text-center p-4 bg-white rounded-lg border border-purple-100">
+              <div className="text-2xl mb-2">📈</div>
+              <h4 className="font-medium text-gray-900 mb-1">Market Sentiment</h4>
+              <p className="text-sm text-gray-600">AI-powered sentiment analysis</p>
+            </div>
+            <div className="text-center p-4 bg-white rounded-lg border border-purple-100">
+              <div className="text-2xl mb-2">🧠</div>
+              <h4 className="font-medium text-gray-900 mb-1">Stock Analysis</h4>
+              <p className="text-sm text-gray-600">Performance insights & predictions</p>
+            </div>
+            <div className="text-center p-4 bg-white rounded-lg border border-purple-100">
+              <div className="text-2xl mb-2">📊</div>
+              <h4 className="font-medium text-gray-900 mb-1">Portfolio Review</h4>
+              <p className="text-sm text-gray-600">Personalized recommendations</p>
+            </div>
           </div>
         </div>
       </div>

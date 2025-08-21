@@ -210,18 +210,161 @@ npm test
 npm run test:coverage
 ```
 
-## 🚀 Deployment
+## 🐳 Docker Deployment
 
-### Backend Deployment
+### Quick Start with Docker Compose
+
+1. **Clone and Setup Environment**
+```bash
+git clone https://github.com/yourusername/aman-kite.git
+cd aman-kite
+
+# Copy environment template
+cp .env.example .env
+
+# Edit .env with your API keys and secure passwords
+nano .env
+```
+
+2. **Start All Services**
+```bash
+# Build and start all services
+docker-compose up --build
+
+# Or run in background
+docker-compose up -d --build
+```
+
+3. **Access the Application**
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs
+- **Database**: localhost:5432
+
+### Individual Service Deployment
+
+#### Backend Only
+```bash
+cd server
+docker build -t kite-backend .
+docker run -p 8000:8000 --env-file ../.env kite-backend
+```
+
+#### Frontend Only
+```bash
+cd client/web
+docker build -t kite-frontend .
+docker run -p 3000:80 kite-frontend
+```
+
+### Production Deployment
+
+#### Using Docker Compose (Recommended)
+```bash
+# Production build with optimizations
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+# View logs
+docker-compose logs -f
+
+# Scale services
+docker-compose up -d --scale backend=3
+```
+
+#### Manual Production Setup
 1. Set up PostgreSQL database
 2. Configure environment variables
-3. Run migrations: `alembic upgrade head`
-4. Deploy with your preferred service (Railway, Heroku, etc.)
+3. Run migrations: `docker-compose exec backend alembic upgrade head`
+4. Deploy with your preferred orchestration (Kubernetes, Docker Swarm, etc.)
 
-### Frontend Deployment
-1. Build the application: `npm run build`
-2. Deploy the `dist/` folder to your hosting service
-3. Configure environment variables for production API URL
+### Docker Services
+
+| Service | Port | Description |
+|---------|------|-------------|
+| **frontend** | 3000 | React app with Nginx |
+| **backend** | 8000 | FastAPI server |
+| **postgres** | 5432 | PostgreSQL database |
+| **redis** | 6379 | Redis cache (optional) |
+
+### Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# Database
+POSTGRES_PASSWORD=your-secure-postgres-password
+
+# JWT Configuration
+SECRET_KEY=your-super-secret-jwt-key-change-this-in-production
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# API Keys
+FINNHUB_API_KEY=your-finnhub-api-key
+GROQ_API_KEY=your-groq-api-key
+
+# Application Settings
+DEBUG=False
+```
+
+### Docker Commands
+
+```bash
+# Build services
+docker-compose build
+
+# Start services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f [service_name]
+
+# Stop services
+docker-compose down
+
+# Remove volumes (⚠️ This will delete data)
+docker-compose down -v
+
+# Update and restart
+docker-compose pull && docker-compose up -d
+
+# Execute commands in containers
+docker-compose exec backend python scripts/seed_database.py
+docker-compose exec postgres psql -U aman -d stockapp
+```
+
+### Health Checks
+
+All services include health checks:
+- **Backend**: `curl http://localhost:8000/health`
+- **Frontend**: `curl http://localhost:3000/health`
+- **Database**: `pg_isready -U aman -d stockapp`
+- **Redis**: `redis-cli ping`
+
+### Troubleshooting
+
+**Database Connection Issues:**
+```bash
+# Check database logs
+docker-compose logs postgres
+
+# Restart database
+docker-compose restart postgres
+```
+
+**Backend Issues:**
+```bash
+# Check backend logs
+docker-compose logs backend
+
+# Run migrations manually
+docker-compose exec backend alembic upgrade head
+```
+
+**Frontend Build Issues:**
+```bash
+# Rebuild frontend
+docker-compose build --no-cache frontend
+```
 
 ## 🤝 API Documentation
 

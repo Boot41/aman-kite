@@ -310,12 +310,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **React Team** for the amazing frontend framework
 - **FastAPI** for the high-performance backend framework
 
-## 📞 Support
 
-For support, email support@kite-trading.com or create an issue on GitHub.
-
----
-
-**Built with ❤️ using modern technologies**
-
-*Making stock trading intelligent and accessible for everyone through AI-powered insights.*

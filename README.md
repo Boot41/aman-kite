@@ -4,7 +4,7 @@ A comprehensive stock trading web application similar to Zerodha, built with mod
 
 ## 🎬 Demo Video
 
-[![Kite Trading Platform Demo](https://img.shields.io/badge/Watch%20Demo-Loom-FF5722?style=for-the-badge&logo=loom)](https://www.loom.com/share/your-demo-video-id)
+[![Kite Trading Platform Demo](https://img.shields.io/badge/Watch%20Demo-Loom-FF5722?style=for-the-badge&logo=loom)](https://www.loom.com/share/1f8ccbbc46294065885c301415c3839f?sid=d4e41f8d-711f-42ef-b098-8f34306a4682)
 
 *Click above to watch a comprehensive demo of all features including AI insights, trading functionality, and portfolio management.*
 

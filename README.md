@@ -119,7 +119,7 @@ npm run dev
 ```
 
 ### 4. Access Application
-- **Frontend**: http://localhost:5173 (or http://localhost:5174 if port 5173 is in use)
+- **Frontend**: http://localhost:5173 (Vite dev server)
 - **Backend API**: http://localhost:8000
 - **API Documentation**: http://localhost:8000/docs
 
@@ -239,7 +239,7 @@ docker-compose up -d --build
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000
 - **API Documentation**: http://localhost:8000/docs
-- **Database**: localhost:5432
+- **Database**: localhost:5433 (mapped from container port 5432)
 
 ### Individual Service Deployment
 
@@ -283,7 +283,7 @@ docker-compose up -d --scale backend=3
 |---------|------|-------------|
 | **frontend** | 3000 | React app with Nginx |
 | **backend** | 8000 | FastAPI server |
-| **postgres** | 5432 | PostgreSQL database |
+| **postgres** | 5433 | PostgreSQL database (mapped from 5432) |
 | **redis** | 6379 | Redis cache (optional) |
 
 ### Environment Variables

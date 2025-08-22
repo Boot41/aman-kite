@@ -11,7 +11,7 @@ class TestFetchStockData:
     
     def test_fetch_stock_data_demo_mode(self):
         """Test fetch_stock_data returns mock data when API key is 'demo'"""
-        with patch.object(settings, 'ALPHA_VANTAGE_API_KEY', 'demo'):
+        with patch.object(settings, 'FINNHUB_API_KEY', 'demo'):
             result = fetch_stock_data('AAPL')
             
             assert result is not None
@@ -24,15 +24,13 @@ class TestFetchStockData:
         """Test successful API response"""
         mock_response = Mock()
         mock_response.json.return_value = {
-            "Global Quote": {
-                "05. price": "175.50",
-                "09. change": "3.25",
-                "10. change percent": "1.89%"
-            }
+            "c": 175.50,  # Current price
+            "d": 3.25,    # Daily change
+            "dp": 1.89    # Daily change percent
         }
         mock_get.return_value = mock_response
         
-        with patch.object(settings, 'ALPHA_VANTAGE_API_KEY', 'test_key'):
+        with patch.object(settings, 'FINNHUB_API_KEY', 'test_key'):
             result = fetch_stock_data('AAPL')
             
             assert result is not None
@@ -45,11 +43,11 @@ class TestFetchStockData:
         """Test API rate limit response"""
         mock_response = Mock()
         mock_response.json.return_value = {
-            "Note": "Thank you for using Alpha Vantage! Our standard API call frequency is 5 calls per minute"
+            "error": "API limit exceeded"
         }
         mock_get.return_value = mock_response
         
-        with patch.object(settings, 'ALPHA_VANTAGE_API_KEY', 'test_key'):
+        with patch.object(settings, 'FINNHUB_API_KEY', 'test_key'):
             result = fetch_stock_data('AAPL')
             
             assert result is None
@@ -59,11 +57,11 @@ class TestFetchStockData:
         """Test API error message response"""
         mock_response = Mock()
         mock_response.json.return_value = {
-            "Error Message": "Invalid API call"
+            "error": "Invalid API call"
         }
         mock_get.return_value = mock_response
         
-        with patch.object(settings, 'ALPHA_VANTAGE_API_KEY', 'test_key'):
+        with patch.object(settings, 'FINNHUB_API_KEY', 'test_key'):
             result = fetch_stock_data('AAPL')
             
             assert result is None
@@ -73,27 +71,27 @@ class TestFetchStockData:
         """Test API information message response"""
         mock_response = Mock()
         mock_response.json.return_value = {
-            "Information": "The **demo** API key is for demo purposes only"
+            "c": None,  # Null current price indicates invalid response
+            "d": None,
+            "dp": None
         }
         mock_get.return_value = mock_response
         
-        with patch.object(settings, 'ALPHA_VANTAGE_API_KEY', 'test_key'):
+        with patch.object(settings, 'FINNHUB_API_KEY', 'test_key'):
             result = fetch_stock_data('AAPL')
             
             assert result is None
     
     @patch('app.utils.stock_data.requests.get')
-    def test_fetch_stock_data_no_global_quote(self, mock_get):
-        """Test response without Global Quote"""
+    def test_fetch_stock_data_no_price_data(self, mock_get):
+        """Test response without price data"""
         mock_response = Mock()
         mock_response.json.return_value = {
-            "Meta Data": {
-                "1. Information": "Daily Prices"
-            }
+            "status": "no_data"
         }
         mock_get.return_value = mock_response
         
-        with patch.object(settings, 'ALPHA_VANTAGE_API_KEY', 'test_key'):
+        with patch.object(settings, 'FINNHUB_API_KEY', 'test_key'):
             result = fetch_stock_data('AAPL')
             
             assert result is None
@@ -103,7 +101,7 @@ class TestFetchStockData:
         """Test request exception handling"""
         mock_get.side_effect = Exception("Network error")
         
-        with patch.object(settings, 'ALPHA_VANTAGE_API_KEY', 'test_key'):
+        with patch.object(settings, 'FINNHUB_API_KEY', 'test_key'):
             result = fetch_stock_data('AAPL')
             
             assert result is None
@@ -115,7 +113,7 @@ class TestFetchStockData:
         mock_response.json.side_effect = ValueError("Invalid JSON")
         mock_get.return_value = mock_response
         
-        with patch.object(settings, 'ALPHA_VANTAGE_API_KEY', 'test_key'):
+        with patch.object(settings, 'FINNHUB_API_KEY', 'test_key'):
             result = fetch_stock_data('AAPL')
             
             assert result is None

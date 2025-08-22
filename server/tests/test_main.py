@@ -66,16 +66,30 @@ class TestMainApp:
     
     def test_api_endpoints_registered(self):
         """Test that all API router endpoints are registered"""
-        # Test some key endpoints exist (they should return proper responses, not 404)
-        endpoints_to_test = [
-            "/api/auth/register",
-            "/api/stocks/",
-            "/api/portfolio/holdings/",
-            "/api/watchlist/",
-            "/api/ai/market-sentiment"
+        # Test endpoints that don't require database access
+        simple_endpoints = [
+            ("/", 200),  # Root endpoint should work
+            ("/health", 200),  # Health check should work
+            ("/docs", 200),  # API docs should work
         ]
         
-        for endpoint in endpoints_to_test:
+        for endpoint, expected_status in simple_endpoints:
             response = self.client.get(endpoint)
-            # Should not be 404 (endpoint exists), might be 401/422/etc based on auth/validation
-            assert response.status_code != 404, f"Endpoint {endpoint} not found"
+            assert response.status_code == expected_status, f"Endpoint {endpoint} returned {response.status_code}, expected {expected_status}"
+        
+        # Test that API routers are included by checking the app's routes
+        route_paths = [route.path for route in app.routes]
+        
+        # Check that key API prefixes are registered
+        expected_prefixes = [
+            "/api/auth",
+            "/api/stocks", 
+            "/api/portfolio",
+            "/api/watchlist",
+            "/api/ai"
+        ]
+        
+        for prefix in expected_prefixes:
+            # Check if any route starts with this prefix
+            prefix_found = any(path.startswith(prefix) for path in route_paths)
+            assert prefix_found, f"No routes found with prefix {prefix}. Available routes: {route_paths}"

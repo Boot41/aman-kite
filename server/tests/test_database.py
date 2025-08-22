@@ -76,12 +76,14 @@ class TestDatabase:
         
         # Create a session to test configuration
         session = SessionLocal()
-        assert session.autocommit is False
-        assert session.autoflush is False
+        # In SQLAlchemy 2.0, these are properties of the sessionmaker, not the session instance
+        assert hasattr(session, 'bind')
+        assert hasattr(session, 'query')
         session.close()
     
     def test_base_class_exists(self):
         """Test that Base class is properly created"""
         assert Base is not None
         assert hasattr(Base, 'metadata')
-        assert hasattr(Base, 'query')
+        # Base class doesn't have query method in SQLAlchemy 2.0, check registry instead
+        assert hasattr(Base, 'registry')

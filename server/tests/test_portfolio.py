@@ -37,7 +37,18 @@ def test_get_portfolio_current_value_no_holdings(client: TestClient, auth_header
     assert data["profit_loss_percentage"] == 0.0
     assert data["holdings"] == []
 
-def test_get_portfolio_current_value_with_holdings(client: TestClient, db_session: Session, auth_headers: dict, test_user: User):
+@patch("api.portfolio.fetch_stock_data")
+def test_get_portfolio_current_value_with_holdings(mock_fetch, client: TestClient, db_session: Session, auth_headers: dict, test_user: User):
+    # Mock fetch_stock_data to return expected prices
+    def mock_fetch_side_effect(ticker):
+        if ticker == "AAPL":
+            return {"price": 150.0, "change": 10.0, "change_percent": 7.14}
+        elif ticker == "GOOGL":
+            return {"price": 2800.0, "change": 100.0, "change_percent": 3.70}
+        return None
+    
+    mock_fetch.side_effect = mock_fetch_side_effect
+    
     stock1 = Stock(ticker_symbol="AAPL", company_name="Apple Inc.", current_price=150.0)
     stock2 = Stock(ticker_symbol="GOOGL", company_name="Alphabet Inc.", current_price=2800.0)
     db_session.add_all([stock1, stock2])

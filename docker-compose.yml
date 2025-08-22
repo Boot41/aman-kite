@@ -11,9 +11,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-defaultpassword}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./server/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - kite-network
     healthcheck:
